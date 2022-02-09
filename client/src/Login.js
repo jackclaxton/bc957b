@@ -8,8 +8,10 @@ import {
   Button,
   FormControl,
   TextField,
+  Hidden,
 } from "@material-ui/core";
 import { login } from "./store/utils/thunkCreators";
+import LoginSignupView from "./components/LoginSignupView";
 
 const Login = (props) => {
   const history = useHistory();
@@ -22,47 +24,52 @@ const Login = (props) => {
 
     await login({ username, password });
   };
+  // Passed to LoginSignupView to change route
+  const onPressCreateAccount = () => {
+    history.push("/register")
+  }
 
   if (user.id) {
     return <Redirect to="/home" />;
   }
 
   return (
-    <Grid container justify="center">
-      <Box>
-        <Grid container item>
-          <Typography>Need to register?</Typography>
-          <Button onClick={() => history.push("/register")}>Register</Button>
-        </Grid>
+      <LoginSignupView
+        formTitle={'Welcome back!'}
+        handleRouteChange={onPressCreateAccount}
+        routeChangeButtonTitle={"Create account"}
+        routeChangeSubtitle={"Don't have an account?"}>
         <form onSubmit={handleLogin}>
-          <Grid>
-            <Grid>
-              <FormControl margin="normal" required>
+          <Grid item>
+            <Grid item>
+              <FormControl margin="normal" required fullWidth> 
                 <TextField
                   aria-label="username"
                   label="Username"
                   name="username"
                   type="text"
+                  fullWidth
                 />
               </FormControl>
             </Grid>
-            <FormControl margin="normal" required>
+            <FormControl margin="normal" required fullWidth>
               <TextField
-                label="password"
+                label="Password"
                 aria-label="password"
                 type="password"
                 name="password"
+                fullWidth
               />
             </FormControl>
-            <Grid>
-              <Button type="submit" variant="contained" size="large">
+            <Grid container item justifyContent={'center'}>
+              <Button 
+                type="submit" variant="contained" size="large" color={'primary'}>
                 Login
               </Button>
             </Grid>
           </Grid>
         </form>
-      </Box>
-    </Grid>
+      </LoginSignupView>
   );
 };
 
