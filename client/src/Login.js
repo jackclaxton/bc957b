@@ -3,12 +3,9 @@ import { Redirect, useHistory } from "react-router-dom";
 import { connect } from "react-redux";
 import {
   Grid,
-  Box,
-  Typography,
   Button,
   FormControl,
   TextField,
-  Hidden,
 } from "@material-ui/core";
 import { login } from "./store/utils/thunkCreators";
 import LoginSignupView from "./components/LoginSignupView";
