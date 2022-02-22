@@ -3,18 +3,17 @@ import { Redirect, useHistory } from "react-router-dom";
 import { connect } from "react-redux";
 import {
   Grid,
-  Box,
-  Typography,
   Button,
   FormControl,
   TextField,
-  Hidden,
 } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core";
 import { login } from "./store/utils/thunkCreators";
 import LoginSignupView from "./components/LoginSignupView";
 
 const Login = (props) => {
   const history = useHistory();
+  const classes = useStyles();
   const { user, login } = props;
 
   const handleLogin = async (event) => {
@@ -59,10 +58,15 @@ const Login = (props) => {
                 type="password"
                 name="password"
                 fullWidth
+                InputProps={{
+                  endAdornment:
+                  <Button variant="text" color="primary">Forgot?</Button>
+                  }}
               />
             </FormControl>
             <Grid container item justifyContent={'center'}>
               <Button 
+                className={classes.loginButton}
                 type="submit" variant="contained" size="large" color={'primary'}>
                 Login
               </Button>
@@ -88,3 +92,9 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);
+
+const useStyles = makeStyles(() => ({ 
+  loginButton: {
+    marginTop: 20,
+  }
+}))
