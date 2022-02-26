@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Box, FormControl, FilledInput, Icon, IconButton, InputAdornment, Grid } from "@material-ui/core";
+import { FormControl, FilledInput, Icon, IconButton, InputAdornment, Grid } from "@material-ui/core";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import { connect } from "react-redux";
 import { postMessage } from "../../store/utils/thunkCreators";
 import AttachmentBubble from "./AttachmentBubble";
+import axios from "axios";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -52,64 +53,51 @@ const Input = (props) => {
   }
   const readFiles = (files) => {
     // Read files from <input> and add displayURL
-    return new Promise((resolve, reject) => {
-      try{
-        let numImages = files['length'];
-        let images = [];
-        for(let x = 0; x <= numImages; x++){
-          if(x === numImages){
-            resolve(images);
-          }else{
-            const image = files[x];
-            const displayURL = URL.createObjectURL(files[x]);
-            image.displayURL = displayURL;
-            images.push(image);
-          }
-        }
-      }catch(error){ reject(error) }
-    })
+    let numImages = files['length'];
+    let images = [];
+    for(let x = 0; x < numImages; x++){
+      const image = files[x];
+      const displayURL = URL.createObjectURL(image);
+      image.displayURL = displayURL;
+      images.push(image);
+    }
+    setImages(images);
   }
   const onPressAttachFile = async (event) => {
     // Read files and add displayURL to image to display before uploading
     const files = event.target.files;
-    const images = await readFiles(files)
-    setImages(images)
+    const images = readFiles(files)
   }
-  const uploadImage = (imgData) => {
+  const uploadImage = async (imgData) => {
     // Upload a single image to cloudinary
-    return new Promise(async (resolve, reject) => {
       try{
-        console.log('imgData: ', imgData)
         // delete imgData.displayURL;
+        const uploadPreset = process.env.REACT_APP_UPLOAD_PRESET;
+        const bucketID = process.env.REACT_APP_BUCKET_ID;
+        const cloudName = process.env.REACT_APP_CLOUD_NAME;
+
         const data = new FormData();
         data.append('file', imgData);
-        data.append('upload_preset', 'unsigned')
-        const uploadOptions = { method: 'post', body: data };
-        const uploadResponse = await fetch("https://api.cloudinary.com/v1_1/dxo2rgo5w/image/upload", uploadOptions);
-        const response = await uploadResponse.json();
-        const imageURL = response.secure_url;
-        console.log('imageURL: ', imageURL);
-        resolve(imageURL);
+        data.append(uploadPreset, bucketID)
+
+        const instance = axios.create();
+        const uploadResponse = await instance.post(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, data);
+        const imageURL = uploadResponse.data.secure_url;
+        return imageURL;
       }catch(error){
-        console.warn('upload error: ', error)
-        reject(error);
+        console.error('uploadImage error: ', error)
       }
-    })
   }
-  const uploadImages = (images) => {
+  const uploadImages = async (images) => {
     // Takes an array images and uploads them to cloudinary, 
     // returning an array of the download url's for those images
-    return new Promise(async (resolve, reject) => {
-      const numImages = images.length;
-      let imageURLs = [];
-      for(let x=0; x <= numImages; x++){
-        if(x === numImages){ return resolve(imageURLs) }
-        else{
-          let imageURL = await uploadImage(images[x]);
-          imageURLs.push(imageURL);
-        }
-      }
+    const numImages = images.length;
+    let imageUploads = [];
+    images.forEach((image) => {
+      imageUploads.push(uploadImage(image))
     })
+    let imageURLs = await Promise.all(imageUploads);
+    return imageURLs;
   }
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -133,7 +121,7 @@ const Input = (props) => {
       setIsLoading(false)
     }catch(error){
       setIsLoading(false)
-      console.log('Error sending message', error)
+      console.error('handleSubmit error: ', error)
     }
   };
 
@@ -142,7 +130,7 @@ const Input = (props) => {
       {images.length > 0 &&
         <Grid container direction={'row'} alignItems={'center'} justifyContent={'flex-end'}>
         {images.map((image, index) => (
-          <AttachmentBubble image={image} index={index} removeImage={removeImage} uploaded={false}/>
+          <AttachmentBubble key={image + index} image={image} index={index} removeImage={removeImage} uploaded={false}/>
         ))}
         {images.length > 0 &&
           <button className={classes.sendImagesButton} style={{ backgroundColor: theme.palette.primary.main }}>

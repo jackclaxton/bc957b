@@ -47,8 +47,8 @@ const SenderBubble = (props) => {
       </Box>
       {attachments?.length > 0 &&
         <Box className={classes.attachmentsContainer}>
-          {attachments.map((attachment) => (
-            <img className={classes.attachment} src={attachment}/>
+          {attachments.map((attachment, index) => (
+            <img className={classes.attachment} src={attachment} key={attachment + index}/>
           ))}
         </Box>}
     </Box>
