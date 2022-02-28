@@ -27,6 +27,9 @@ const useStyles = makeStyles(() => ({
     zIndex: 1, 
     backgroundColor: 'transparent', 
     border: 'none'
+  },
+  removePhotoIcon:{
+    color: 'red',
   }
 }));
 
@@ -40,7 +43,7 @@ const AttachmentBubble = ({image, index, removeImage, uploaded}) => {
         onClick={() => removeImage(index)}
         type={"button"}
         className={classes.iconContainer}>
-        <Icon baseclassname="material-icons-two-tone" style={{ color: 'red'}}>remove_circle</Icon>
+        <Icon baseclassname="material-icons-two-tone" className={classes.removePhotoIcon}>remove_circle</Icon>
       </button>
     </Box>
   )

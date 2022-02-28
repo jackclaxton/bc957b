@@ -6,7 +6,7 @@ import { postMessage } from "../../store/utils/thunkCreators";
 import AttachmentBubble from "./AttachmentBubble";
 import axios from "axios";
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     justifySelf: "flex-end",
     justifyContent: 'center',
@@ -25,6 +25,7 @@ const useStyles = makeStyles(() => ({
     border: 'none',
     marginLeft: 10,
     boxShadow: '0 0 3px #00000070',
+    backgroundColor: theme.palette.primary.main,
   },
   sendIcon: {
     transform: 'rotate(-45deg)',
@@ -34,7 +35,6 @@ const useStyles = makeStyles(() => ({
 }));
 
 const Input = (props) => {
-  const theme = useTheme()
   const classes = useStyles();
   const [text, setText] = useState("");
   const { postMessage, otherUser, conversationId, user } = props;
@@ -46,13 +46,11 @@ const Input = (props) => {
     setText(event.target.value);
   };
   const removeImage = (imageIndex) => {
-    // Remove image from message before sending
     let imagesCopy = [...images];
     imagesCopy.splice(imageIndex, 1);
     setImages(imagesCopy);
   }
   const readFiles = (files) => {
-    // Read files from <input> and add displayURL
     let numImages = files['length'];
     let images = [];
     for(let x = 0; x < numImages; x++){
@@ -64,14 +62,11 @@ const Input = (props) => {
     setImages(images);
   }
   const onPressAttachFile = async (event) => {
-    // Read files and add displayURL to image to display before uploading
     const files = event.target.files;
     const images = readFiles(files)
   }
   const uploadImage = async (imgData) => {
-    // Upload a single image to cloudinary
       try{
-        // delete imgData.displayURL;
         const uploadPreset = process.env.REACT_APP_UPLOAD_PRESET;
         const bucketID = process.env.REACT_APP_BUCKET_ID;
         const cloudName = process.env.REACT_APP_CLOUD_NAME;
@@ -89,8 +84,6 @@ const Input = (props) => {
       }
   }
   const uploadImages = async (images) => {
-    // Takes an array images and uploads them to cloudinary, 
-    // returning an array of the download url's for those images
     const numImages = images.length;
     let imageUploads = [];
     images.forEach((image) => {
@@ -104,7 +97,6 @@ const Input = (props) => {
     if(isLoading){ return }
     try{
       setIsLoading(true)
-      // add sender user info if posting to a brand new convo, so that the other user will have access to username, profile pic, etc.
       let reqBody = {
         text: event.target.text.value,
         recipientId: otherUser.id,
@@ -133,7 +125,7 @@ const Input = (props) => {
           <AttachmentBubble key={image + index} image={image} index={index} removeImage={removeImage} uploaded={false}/>
         ))}
         {images.length > 0 &&
-          <button className={classes.sendImagesButton} style={{ backgroundColor: theme.palette.primary.main }}>
+          <button className={classes.sendImagesButton}>
             <Icon baseclassname="material-icons-two-tone" className={classes.sendIcon}>send</Icon>
           </button>
         }
@@ -153,7 +145,7 @@ const Input = (props) => {
               onClick={() => fileInputRef.current.click()}>
                 <input type={'file'} name={'myImage'} ref={fileInputRef} onChange={onPressAttachFile} accept="image/x-png,image/gif,image/jpeg" multiple hidden/>
                   <IconButton aria-label="attach photo" >
-                    <Icon baseclassname="material-icons-two-tone" style={{zIndex: 3}}>insert_photo</Icon>
+                    <Icon baseclassname="material-icons-two-tone">insert_photo</Icon>
                   </IconButton>
             </InputAdornment>
           }>

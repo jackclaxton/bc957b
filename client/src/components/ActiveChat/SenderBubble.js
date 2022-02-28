@@ -39,18 +39,21 @@ const useStyles = makeStyles(() => ({
 const SenderBubble = (props) => {
   const classes = useStyles();
   const { time, text, attachments } = props;
+  const renderAttachments = () => (
+    <Box className={classes.attachmentsContainer}>
+      {attachments.map((attachment, index) => (
+        <img className={classes.attachment} src={attachment} key={attachment + index}/>
+      ))}
+    </Box>
+  )
   return (
     <Box className={classes.root}>
       <Typography className={classes.date}>{time}</Typography>
+      {attachments?.length === 1 && renderAttachments()}
       <Box className={classes.bubble}>
         <Typography className={classes.text}>{text}</Typography>
       </Box>
-      {attachments?.length > 0 &&
-        <Box className={classes.attachmentsContainer}>
-          {attachments.map((attachment, index) => (
-            <img className={classes.attachment} src={attachment} key={attachment + index}/>
-          ))}
-        </Box>}
+      {attachments?.length > 1 && renderAttachments()}
     </Box>
   );
 };
