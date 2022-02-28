@@ -6,7 +6,8 @@ const useStyles = makeStyles(() => ({
   root: {
     display: "flex",
     flexDirection: "column",
-    alignItems: "flex-end"
+    alignItems: "flex-end",
+    marginTop: 5,
   },
   date: {
     fontSize: 11,
@@ -24,18 +25,35 @@ const useStyles = makeStyles(() => ({
   bubble: {
     background: "#F4F6FA",
     borderRadius: "10px 10px 0 10px"
-  }
+  },
+  attachmentsContainer:{
+    display: 'flex',
+  },
+  attachment:{
+    height: 70,  width: 70,
+    borderRadius: 5,
+    marginLeft: 10,
+  },
 }));
 
 const SenderBubble = (props) => {
   const classes = useStyles();
-  const { time, text } = props;
+  const { time, text, attachments } = props;
+  const renderAttachments = () => (
+    <Box className={classes.attachmentsContainer}>
+      {attachments.map((attachment, index) => (
+        <img className={classes.attachment} src={attachment} key={attachment + index}/>
+      ))}
+    </Box>
+  )
   return (
     <Box className={classes.root}>
       <Typography className={classes.date}>{time}</Typography>
+      {attachments?.length === 1 && renderAttachments()}
       <Box className={classes.bubble}>
         <Typography className={classes.text}>{text}</Typography>
       </Box>
+      {attachments?.length > 1 && renderAttachments()}
     </Box>
   );
 };
