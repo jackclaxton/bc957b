@@ -8,11 +8,13 @@ import {
   TextField,
   FormHelperText,
 } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core";
 import { register } from "./store/utils/thunkCreators";
 import LoginSignupView from "./components/LoginSignupView";
 
 const Login = (props) => {
   const history = useHistory();
+  const classes = useStyles();
   const { user, register } = props;
   const [formErrorMessage, setFormErrorMessage] = useState({});
 
@@ -103,7 +105,9 @@ const Login = (props) => {
             </FormControl>
           </Grid>
           <Grid container item justifyContent={'center'}>
-            <Button type="submit" variant="contained" size="large" color={'primary'}>
+            <Button 
+              className={classes.submitButton}
+              type="submit" variant="contained" size="large" color={'primary'}>
               Create
             </Button>
           </Grid>
@@ -128,3 +132,9 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);
+
+const useStyles = makeStyles(() => ({ 
+  submitButton: {
+    marginTop: 20,
+  }
+}))

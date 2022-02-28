@@ -7,15 +7,8 @@ import {
   Button,
 } from '@material-ui/core';
 import { makeStyles } from "@material-ui/core/styles";
-import bgImg from '../assets/bg-img.png';
+import backgroundImage from '../assets/bg-img.png';
 import bubbleSVG from '../assets/bubble.svg';
-
-// Wrapper component for the Login & Signup screens to reduce code reuse and enable for easier editing
-// Takes children - the form
-// handleRouteChange - traveling between Login/Signup
-// routeChangeSubtitle - subtitle for the route change button (i.e. "Don't have an account"/"Already have account?")
-// routeChangeButtonTitle - title for the route change button (i.e. "Login"/"Signup")
-// formTitle - title of form (i.e. "Welcome back!"/"Create account")
 
 const LoginSignupView = ({children, handleRouteChange, routeChangeSubtitle, routeChangeButtonTitle, formTitle, }) => {
   const classes = useStyles();
@@ -23,7 +16,7 @@ const LoginSignupView = ({children, handleRouteChange, routeChangeSubtitle, rout
     <Grid container direction="row">
       <Hidden xsDown>
         <Grid container item sm={6}>
-          <img alt='Background' src={bgImg} className={classes.backgroundImage}/>
+          <img alt='Background image' src={backgroundImage} className={classes.backgroundImage}/>
           <Box className={classes.gradientOverlay}/>
           <Grid container item justifyContent={'center'} alignItems={'center'} direction={'column'}>
             <img alt={'Message bubble'} src={bubbleSVG} className={classes.bubbleIcon} />
@@ -41,7 +34,7 @@ const LoginSignupView = ({children, handleRouteChange, routeChangeSubtitle, rout
         </Box>
         <Box className={classes.outerFormContainer}>
           <Box className={classes.formContainer}>
-            <Typography variant={'h5'}>{formTitle}</Typography>
+            <Typography variant={'h4'}>{formTitle}</Typography>
             {children}
           </Box>
         </Box>
@@ -83,12 +76,13 @@ const useStyles = makeStyles(() => ({
     justifyContent: 'flex-end', 
     alignItems: 'center', 
     display: 'flex', 
-    paddingTop: 10, 
-    paddingRight: 10
+    paddingTop: 15, 
+    paddingRight: 20
   },
   routeChangeButton:{
     backgroundColor: 'white', 
     color: '#3A8DFF',
+    marginLeft: 10,
   },
   outerFormContainer:{
     display: 'flex',
